@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"gopkg.in/go-playground/validator.v9"
@@ -16,14 +16,14 @@ func main() {
 
 	r.GET("/car", func(c *gin.Context) {
 		var query struct {
-			ID    string `json"-"`
-			Name  string `json:"name" binding:"required"`
-			Color string `json:"color" binding:"oneof=red blue`
+			Name  string `form:"name" binding:"required"`
+			Color string `form:"color" binding:"required,oneof=blue yellow"`
 		}
 
 		if err := c.ShouldBind(&query); err != nil {
+			spew.Dump(err)
 			for _, fieldErr := range err.(validator.ValidationErrors) {
-				c.JSON(http.StatusBadRequest, fmt.Sprint(fieldErr))
+				c.JSON(http.StatusBadRequest, fieldError{fieldErr}.String())
 				return // exit on first error
 			}
 		}

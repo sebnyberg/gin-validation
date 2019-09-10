@@ -2,6 +2,7 @@ package main
 
 import (
 	"reflect"
+	"strings"
 	"sync"
 
 	"github.com/gin-gonic/gin/binding"
@@ -16,7 +17,6 @@ type defaultValidator struct {
 var _ binding.StructValidator = &defaultValidator{}
 
 func (v *defaultValidator) ValidateStruct(obj interface{}) error {
-
 	if kindOfData(obj) == reflect.Struct {
 
 		v.lazyinit()
@@ -40,6 +40,12 @@ func (v *defaultValidator) lazyinit() {
 		v.validate.SetTagName("binding")
 
 		// add any custom validations etc. here
+		// Print JSON name on validator.FieldError.Field()
+		v.validate.RegisterTagNameFunc(func(fld reflect.StructField) string {
+			name := strings.SplitN(fld.Tag.Get("form"), ",", 2)[0]
+
+			return name
+		})
 	})
 }
 

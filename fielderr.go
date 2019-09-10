@@ -14,7 +14,7 @@ type fieldError struct {
 func (q fieldError) String() string {
 	var sb strings.Builder
 
-	sb.WriteString("validation failed on field " + q.err.Field())
+	sb.WriteString("validation failed on field '" + q.err.Field() + "'")
 	sb.WriteString(", condition: " + q.err.ActualTag())
 
 	// Print condition parameters, e.g. oneof=red blue -> { red blue }
